@@ -12,6 +12,7 @@ module.exports = merge(webpackBaseConfig, {
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: 'examples/index.html',
+            chunks:['index']
         }),
     ],
     devServer: {

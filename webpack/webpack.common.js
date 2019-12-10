@@ -1,7 +1,11 @@
 const path = require('path')
 
 module.exports = {
-    entry: './src/index.ts',
+    entry: { zvm: './src/zvm.ts', index: './examples/index.js' },
+    output: {
+        filename: '[name]-[hash:4].js',
+        path: path.resolve(__dirname,'..', 'dist'),
+    },
     module: {
         rules: [
             {
@@ -13,10 +17,6 @@ module.exports = {
     },
     resolve: {
         extensions: ['.ts', '.js'],
-    },
-    output: {
-        filename: 'zvm.js',
-        path: path.resolve(__dirname,'..', 'dist'),
     },
 
 };
