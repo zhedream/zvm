@@ -13,7 +13,7 @@ export class Zvm implements zvmInterface{
         this.$data = options.data
         this.$el = typeof options.el === 'string' ? document.querySelector(options.el) : options.el
         new Compile(this.$el as HTMLElement, this);
-        console.log((this.$el as HTMLElement).childNodes);
+        // console.log((this.$el as HTMLElement).childNodes);
          
     }
 

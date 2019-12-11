@@ -14,26 +14,59 @@ export class Compile {
         // 3. 放回 dom 
         // this.el.appendChild(fragment);
     }
-
-    node2fragment(node: HTMLElement) {
-        DocumentFragment
+    /**
+     * 将 dom 放内存中 , 转成 DocumentFragment
+     * @param node HTMLElement
+     */
+    node2fragment(element: HTMLElement) {
         let fragment = document.createDocumentFragment();
-        this.toArray(node.childNodes).forEach(node => {
-            fragment.appendChild(node)
-        })
+        // console.log(element.childNodes);
+
+        fragment.append(...Array.from(element.childNodes))
+        // element.childNodes.forEach(node => fragment.appendChild(node)) // 有什么区别 , childNodes 伪数组
+        // Array.from(element.childNodes).forEach(node => fragment.appendChild(node))
         return fragment;
     }
-
-    compile(fragment: DocumentFragment) {
+    /**
+     * 编译 dom
+     * @param fragment DocumentFragment
+     */
+    compile(fragment: DocumentFragment | ChildNode) {
         let childNodes = fragment.childNodes;
-        this.toArray(childNodes).forEach((node:ChildNode) => {
-            console.log(node);
-            
+        Array.from(childNodes).forEach((node: ChildNode) => {
+            if (this.isTextNode(node)) this.comlileText(node)
+            if (this.isElementNode(node)) this.compileEmement(node)
+            if (node.childNodes && node.childNodes.length > 0) this.compile(node)
         })
+    }
+    /**
+     * 处理文本节点
+     * @param node 
+     */
+    comlileText(node: ChildNode) {
+        console.log('文本节点', node);
+    }
+    /**
+     * 处理元素节点
+     * @param node
+     */
+    compileEmement(node: ChildNode) {
+        console.log('元素节点', node);
 
     }
-
-    toArray(linkArr: any) {
-        return [].slice.call(linkArr)
+    /**
+     * 是否 元素节点
+     * @param node
+     */
+    isElementNode(node: ChildNode) {
+        return node.nodeType === 1
     }
+    /**
+     * 是否 文本节点
+     * @param node
+     */
+    isTextNode(node: ChildNode) {
+        return node.nodeType === 3
+    }
+
 }
