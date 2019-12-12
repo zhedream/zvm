@@ -12,10 +12,12 @@
     <div id="app">
         {{msg}}
         <h1>{{msg1}}</h1>
+        <h1>{{arr[0].arr[0].name}}</h1>
+        <h1>{{arr[1][0][0]}}</h1>
         <h3 v-text="msg2"></h3>
         <div>
             <input type="text" v-model="msg">
-            <button v-on:click="hello">say</button>
+            <button v-on:click="hello">{{obj.name}}</button>
         </div>
         <div v-html="msg3"></div>
         <input v-model="msg4" type="text">

@@ -50,7 +50,9 @@ export class Compile {
         let reg = /\{\{(.+)\}\}/;
         if (reg.test(text) === true) {
             let expr = RegExp.$1
-            node.textContent = text.replace(reg, (this.vm.$data as any)[expr])
+            let val = exprFromData(expr, this.vm.$data);
+            // console.log(val);
+            node.textContent = text.replace(reg, val)
         }
 
     }
@@ -113,17 +115,39 @@ export class Compile {
 }
 
 /**
+ * 返回 表达式的值 data:{  }
+ * @param expr 表达式 如: obj.name
+ * @param data 数据 data:{name:'',...}
+ */
+function exprFromData(expr: string, data: any) {
+    let exprArr = expr.split('.');
+    let val = data;
+    exprArr.forEach(expr => {
+        let reg = /(.+)(\[\d+\])+/;
+        if (reg.test(expr) === true) {
+            // arr[0][0]
+            expr.split('[').forEach(key => {
+                let k = key.split(']')[0];
+                val = val[k];
+            })
+        } else val = val[expr] // 对象
+
+    })
+    return val;
+}
+
+/**
  * 编译的方法
  */
 const CompileUtil = {
     text(node: HTMLElement, vm: zvmInterface, expr: string) {
-        node.textContent = vm.$data[expr];
+        node.textContent = exprFromData(expr, vm.$data);
     },
     html(node: HTMLElement, vm: zvmInterface, expr: string) {
-        node.innerHTML = vm.$data[expr];
+        node.innerHTML = exprFromData(expr, vm.$data);
     },
     model(node: HTMLElement, vm: zvmInterface, expr: string) {
-        (node as HTMLInputElement).value = vm.$data[expr];
+        (node as HTMLInputElement).value = exprFromData(expr, vm.$data);
     },
     handleEnevt(node: HTMLElement, vm: zvmInterface, eventType: string, expr: string) {
         if (vm.$methods && vm.$methods.hasOwnProperty(expr) === true)
