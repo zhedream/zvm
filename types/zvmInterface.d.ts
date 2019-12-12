@@ -1,5 +1,6 @@
 export interface zvmInterface {
     $options: Options;
     $el: HTMLElement | null;
-    $data: Object | undefined;
+    $data: Object | any;
+    $methods: Object | any
 }
