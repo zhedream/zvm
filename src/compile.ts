@@ -1,6 +1,7 @@
 
 import { zvmInterface } from '../types/zvmInterface'
 import { fromEvent } from 'rxjs'
+import { types } from 'util'
 
 export class Compile {
     el: HTMLElement
@@ -45,35 +46,35 @@ export class Compile {
      * @param node 
      */
     comlileText(node: HTMLElement) {
-        // console.log('文本节点', node);
+        let text = node.textContent as string;
+        let reg = /\{\{(.+)\}\}/;
+        if (reg.test(text) === true) {
+            let expr = RegExp.$1
+            node.textContent = text.replace(reg, (this.vm.$data as any)[expr])
+        }
+
     }
     /**
-     * 处理元素节点
+     * 处理元素/标签节点
      * @param node
      */
     compileEmement(node: HTMLElement) {
         // console.log('元素节点', node);
         node.childNodes
         let attributes = node.attributes;
+        // 判断 属性中的指令
         Array.from(attributes).forEach(attr => {
             let attrName = attr.name
-            if (this.isDirective(attr.name)) {
-                let type = attrName.slice(2)
+            if (this.isDirective(attrName)) {
+                let type = attrName.slice(2) // 如: v-on:click
                 let attrValue = attr.value
-                if (type === 'text') {
-                    node.textContent = this.vm.$data[attrValue];
-                }
-                if (type === 'html') {
-                    node.innerHTML = this.vm.$data[attrValue];
-                }
-                if (type === 'model') {
-                    (node as HTMLInputElement).value = this.vm.$data[attrValue];
-                }
-
                 if (this.isEventDirective(type)) {
                     let eventType = type.split(':')[1];
-                    fromEvent(node, eventType).subscribe(this.vm.$methods[attrValue].bind(this.vm))
-
+                    CompileUtil.handleEnevt(node, this.vm, eventType, attrValue);
+                } else {
+                    if (CompileUtil.hasOwnProperty(type) === true)
+                        (CompileUtil as any)[type](node, this.vm, attrValue)
+                    else console.error(`不存在 v-${type} 指令`, node);
                 }
             }
 
@@ -94,7 +95,10 @@ export class Compile {
     isTextNode(node: ChildNode) {
         return node.nodeType === 3
     }
-
+    /**
+     * 是否 指令 v-
+     * @param attrName 
+     */
     isDirective(attrName: string) {
         return attrName.startsWith('v-')
     }
@@ -104,6 +108,27 @@ export class Compile {
      */
     isEventDirective(type: string) {
         return type.split(':')[0] === 'on'
+    }
+
+}
+
+/**
+ * 编译的方法
+ */
+const CompileUtil = {
+    text(node: HTMLElement, vm: zvmInterface, expr: string) {
+        node.textContent = vm.$data[expr];
+    },
+    html(node: HTMLElement, vm: zvmInterface, expr: string) {
+        node.innerHTML = vm.$data[expr];
+    },
+    model(node: HTMLElement, vm: zvmInterface, expr: string) {
+        (node as HTMLInputElement).value = vm.$data[expr];
+    },
+    handleEnevt(node: HTMLElement, vm: zvmInterface, eventType: string, expr: string) {
+        if (vm.$methods && vm.$methods.hasOwnProperty(expr) === true)
+            fromEvent(node, eventType).subscribe(vm.$methods[expr].bind(vm))
+        else console.error(`不存在 ${expr} 方法`, node);
     }
 
 }
