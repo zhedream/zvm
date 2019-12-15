@@ -11,17 +11,12 @@
 <body>
     <div id="app">
         {{msg}}
-        <h1>{{msg1}}</h1>
-        <h1>{{arr[0].arr[0].name}}</h1>
-        <h1>{{arr[1][0][0]}}</h1>
-        <h3 v-text="msg2"></h3>
+        <h1 v-text="msg"></h1>
+        <h1 v-text="obj.name"></h1>
         <div>
-            <input type="text" v-model="msg">
+            <input type="text" v-model="obj.name">
             <button v-on:click="hello">{{obj.name}}</button>
         </div>
-        <div v-html="msg3"></div>
-        <input v-model="msg4" type="text">
-        <!-- <p>This is an MVVM framework</p> -->
     </div>
 </body>
 

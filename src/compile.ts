@@ -1,7 +1,10 @@
 
 import { zvmInterface } from '../types/zvmInterface'
 import { fromEvent } from 'rxjs'
-import { types } from 'util'
+import { debounceTime } from 'rxjs/operators'
+
+import { exprFromData, exprToData } from './util'
+import { Watcher } from './watcher'
 
 export class Compile {
     el: HTMLElement
@@ -51,8 +54,10 @@ export class Compile {
         if (reg.test(text) === true) {
             let expr = RegExp.$1
             let val = exprFromData(expr, this.vm.$data);
-            // console.log(val);
             node.textContent = text.replace(reg, val)
+            new Watcher(this.vm, expr, (newValue: any, oldValue: any) => {
+                node.textContent = newValue
+            })
         }
 
     }
@@ -115,39 +120,35 @@ export class Compile {
 }
 
 /**
- * 返回 表达式的值 data:{  }
- * @param expr 表达式 如: obj.name
- * @param data 数据 data:{name:'',...}
- */
-function exprFromData(expr: string, data: any) {
-    let exprArr = expr.split('.');
-    let val = data;
-    exprArr.forEach(expr => {
-        let reg = /(.+)(\[\d+\])+/;
-        if (reg.test(expr) === true) {
-            // arr[0][0]
-            expr.split('[').forEach(key => {
-                let k = key.split(']')[0];
-                val = val[k];
-            })
-        } else val = val[expr] // 对象
-
-    })
-    return val;
-}
-
-/**
  * 编译的方法
  */
 const CompileUtil = {
+    // v-text
     text(node: HTMLElement, vm: zvmInterface, expr: string) {
         node.textContent = exprFromData(expr, vm.$data);
+        new Watcher(vm, expr, (newValue: any, oldValue: any) => {
+            node.textContent = newValue
+        })
     },
+    // v-html
     html(node: HTMLElement, vm: zvmInterface, expr: string) {
         node.innerHTML = exprFromData(expr, vm.$data);
+        new Watcher(vm, expr, (newValue: any, oldValue: any) => {
+            node.innerHTML = newValue;
+        })
     },
+    // v-model
     model(node: HTMLElement, vm: zvmInterface, expr: string) {
         (node as HTMLInputElement).value = exprFromData(expr, vm.$data);
+        fromEvent(node, 'input').pipe(
+            debounceTime(400)
+        ).subscribe(e => {
+            let value = (e.target as HTMLInputElement).value
+            exprToData(expr,value,vm.$data)
+        })
+        new Watcher(vm, expr, (newValue: any, oldValue: any) => {
+            (node as HTMLInputElement).value = newValue;
+        })
     },
     handleEnevt(node: HTMLElement, vm: zvmInterface, eventType: string, expr: string) {
         if (vm.$methods && vm.$methods.hasOwnProperty(expr) === true)
