@@ -13,8 +13,9 @@ export class Watcher implements Observer<any> {
         this.vm = vm;
         this.expr = expr;
         this.cb = cb;
-        Observe.target = this; // 静态成员
-        this.oldValue = exprFromData(expr, this.vm.$data); // 触发 getter 进行订阅
+        console.log(`订阅数据: ${expr}`);
+        Observe.target = this; // 数据劫持者, 报道. Observe 静态成员
+        this.oldValue = exprFromData(expr, this.vm.$data); // 触发 getter 进行订阅 , 对 expr (数据) 进行订阅
         Observe.target = null;
 
     }

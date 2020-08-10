@@ -1,6 +1,6 @@
 import { Zvm } from '../src/zvm'
 
-var vm = new Zvm({
+window.vm = new Zvm({
     el: '#app',
     data: {
         msg: 'hello',
@@ -16,7 +16,7 @@ var vm = new Zvm({
             this.obj.name = 'newName'
             this.say();
         },
-        say(){
+        say() {
             console.log(this.obj.name);
         }
     }
