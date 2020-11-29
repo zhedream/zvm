@@ -25,7 +25,7 @@ export function exprFromData(expr: string, data: any) {
  * @param value 值
  * @param data 原数据 对象/数组
  */
-export function exprToData(expr: string, value: any, data: any, ) {
+export function exprToData(expr: string, value: any, data: any,) {
     let exprArr = expr.split('.');
     let val = data;
     exprArr.forEach((expr, index) => {

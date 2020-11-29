@@ -10,13 +10,15 @@
 
 <body>
     <div id="app">
-        {{msg}}
+
+        <p>{{msg}}</p>
+        <p v-for="">{{msg}}</p>
         <input type="text" v-model="msg">
         <h1 v-text="msg"></h1>
-        <h1 v-text="obj.name"></h1>
         <div>
-            <input type="text" v-model="obj.name">
-            <button v-on:click="hello">{{obj.name}}</button>
+            <input v-on:input="input" type="text" v-model="obj.name">
+            <button v-on:click="hello">{{btnName}}1</button>
+            <button v-on:click="hello1(msg,1,'as')">{{btnName}}2</button>
         </div>
     </div>
 </body>

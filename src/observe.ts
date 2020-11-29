@@ -13,7 +13,7 @@ export class Observe {
     }
 
     walk(data: any) {
-        debugger
+        // debugger
         if (!data || typeof data != 'object')
             return
         Object.keys(data).forEach(key => {

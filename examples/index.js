@@ -1,23 +1,27 @@
-import { Zvm } from '../src/zvm'
+import { Zvm } from "../src/zvm";
 
 window.vm = new Zvm({
-    el: '#app',
-    data: {
-        msg: 'hello',
-        obj: {
-            name: "zhedream",
-            age: 18,
-        },
+  el: "#app",
+  data() {
+    return {
+      msg: "hello",
+      btnName: '点击',
+      obj: {
+        name: "zhedream",
+        age: 18,
+      },
+    }
+  },
+  methods: {
+    hello: function () {
+      this.say();
+    },
+    hello1(a, b, c) {
+      console.log(a, b, c);
 
     },
-    methods: {
-        hello: function () {
-            console.log(this.obj);
-            this.obj.name = 'newName'
-            this.say();
-        },
-        say() {
-            console.log(this.obj.name);
-        }
-    }
-})
+    input() {
+      console.log('input');
+    },
+  },
+});

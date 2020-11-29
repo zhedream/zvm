@@ -8,7 +8,7 @@ module.exports = merge(webpackBaseConfig, {
     entry: './src/zvm.ts',
     output: {
         filename: 'zvm-[hash].js',
-        path: path.resolve(__dirname,'..', 'dist'),
+        path: path.resolve(__dirname, '..', 'dist'),
     },
     mode: 'production',
     devtool: 'none',

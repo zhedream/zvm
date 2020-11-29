@@ -8,11 +8,11 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = merge(webpackBaseConfig, {
     mode: 'development',
     devtool: 'cheap-module-eval-source-map',
-    plugins:[
+    plugins: [
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: 'examples/index.html',
-            chunks:['index']
+            chunks: ['index']
         }),
     ],
     devServer: {

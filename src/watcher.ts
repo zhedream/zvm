@@ -14,6 +14,7 @@ export class Watcher implements Observer<any> {
         this.expr = expr;
         this.cb = cb;
         console.log(`订阅数据: ${expr}`);
+        // 依赖收集
         Observe.target = this; // 数据劫持者, 报道. Observe 静态成员
         this.oldValue = exprFromData(expr, this.vm.$data); // 触发 getter 进行订阅 , 对 expr (数据) 进行订阅
         Observe.target = null;
@@ -22,7 +23,7 @@ export class Watcher implements Observer<any> {
 
     next(newValue: any) {
         let oldValue = this.oldValue
-        if (oldValue != newValue) {
+        if (oldValue !== newValue) {
             this.oldValue = newValue;
             this.cb(newValue, oldValue);
         }
